@@ -1,0 +1,14 @@
+add table ip filter
+add chain ip filter INPUT { type filter hook input priority 0; policy drop; }
+add chain ip filter FORWARD { type filter hook forward priority 0; policy drop; }
+add chain ip filter OUTPUT { type filter hook output priority 0; policy drop; }
+add rule ip filter INPUT iifname "lo" counter accept comment "Allow loopback device (internal communication) INPUT"
+add rule ip filter INPUT ip saddr 192.168.0.0/24 counter accept comment "Allow all local traffic INPUT"
+add rule ip filter INPUT udp sport 53 counter accept comment "Allow VPN establishment INPUT"
+add rule ip filter INPUT udp sport 1198 counter accept comment "Allow VPN establishment INPUT"
+add rule ip filter INPUT iifname "tun*" counter accept comment "Accept all TUN connections (tun = VPN tunnel) INPUT"
+add rule ip filter OUTPUT oifname "lo" counter accept comment "Allow loopback device (internal communication) OUTPUT"
+add rule ip filter OUTPUT ip daddr 192.168.0.0/24 counter accept comment "Allow all local traffic OUTPUT"
+add rule ip filter OUTPUT udp dport 53 counter accept comment "Allow VPN establishment OUTPUT"
+add rule ip filter OUTPUT udp dport 1198 counter accept comment "Allow VPN establishment OUTPUT"
+add rule ip filter OUTPUT oifname "tun*" counter accept comment "Accept all TUN connections (tun = VPN tunnel) OUTPUT"

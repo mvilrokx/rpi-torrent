@@ -1,0 +1,14 @@
+# Enable VNC Service
+# To get the HDMI_GROUP and HDMI_MODE (the 2 numbers after do_resolution)
+# you can use the commands:
+# $ raspi-config nonint get_config_var hdmi_group /boot/config.txt
+# $ raspi-config nonint get_config_var hdmi_mode /boot/config.txt
+# You could set the RPI manually using the raspi-config UI and then get these values
+- name: Enable VNC Service on boot
+  # command: systemctl enable vncserver-x11-serviced
+  command: raspi-config nonint do_vnc  0
+  become: yes
+
+- name: Set the resolution via raspi-config - group 2 mode 85 - 1280 x 720 (60Hz)
+  command: raspi-config nonint do_resolution 2 85
+  become: yes

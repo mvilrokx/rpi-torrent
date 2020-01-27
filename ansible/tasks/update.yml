@@ -1,0 +1,5 @@
+# Run apt-get update and apt-get upgrade
+
+- name: Update apt packages
+  apt: update_cache=yes upgrade=dist
+  become: yes

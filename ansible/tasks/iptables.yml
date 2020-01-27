@@ -1,0 +1,129 @@
+# - name: Switch back from nft to iptables (https://wiki.debian.org/nftables)
+#   command: 'update-alternatives --set {{ item }}'
+#   with_items:
+#     - iptables /usr/sbin/iptables-legacy
+#     - ip6tables /usr/sbin/ip6tables-legacy
+#     # - arptables /usr/sbin/arptables-legacy
+#     # - ebtables /usr/sbin/ebtables-legacy
+#   become: yes
+#   notify: reboot
+
+# Based on https://www.raspberrypi.org/forums/viewtopic.php?t=223589
+
+- name: Allow loopback device (internal communication) INPUT
+  iptables:
+    chain: INPUT
+    in_interface: lo
+    jump: ACCEPT
+    comment: Allow loopback device (internal communication) INPUT
+  become: yes
+
+- name: Allow loopback device (internal communication) OUTPUT
+  iptables:
+    chain: OUTPUT
+    out_interface: lo
+    jump: ACCEPT
+    comment: Allow loopback device (internal communication) OUTPUT
+  become: yes
+
+- name: Allow all local traffic INPUT
+  iptables:
+    chain: INPUT
+    source: 192.168.0.0/24
+    jump: ACCEPT
+    comment: Allow all local traffic INPUT
+  become: yes
+
+- name: Allow all local traffic OUTPUT
+  iptables:
+    chain: OUTPUT
+    destination: 192.168.0.0/24
+    jump: ACCEPT
+    comment: Allow all local traffic OUTPUT
+  become: yes
+
+# Only 2 ports open, 1 for DNS and 1 for VPN
+# If establishing thru an IP and not a name, the ones with port 53 can be removed
+# Port 1198 may be different depending on the VPN
+- name: Allow VPN establishment INPUT Port 53
+  iptables:
+    chain: INPUT
+    protocol: udp
+    source_port: 53
+    jump: ACCEPT
+    comment: Allow VPN establishment INPUT
+  become: yes
+
+- name: Allow VPN establishment OUTPUT Port 53
+  iptables:
+    chain: OUTPUT
+    protocol: udp
+    destination_port: 53
+    jump: ACCEPT
+    comment: Allow VPN establishment OUTPUT
+  become: yes
+
+- name: Allow VPN establishment INPUT Port 1198
+  iptables:
+    chain: INPUT
+    protocol: udp
+    source_port: 1198
+    jump: ACCEPT
+    comment: Allow VPN establishment INPUT
+  become: yes
+
+- name: Allow VPN establishment OUTPUT Port 1198
+  iptables:
+    chain: OUTPUT
+    protocol: udp
+    destination_port: 1198
+    jump: ACCEPT
+    comment: Allow VPN establishment OUTPUT
+  become: yes
+
+- name: Accept all TUN connections (tun = VPN tunnel) INPUT
+  iptables:
+    chain: INPUT
+    in_interface: tun+
+    jump: ACCEPT
+    comment: Accept all TUN connections (tun = VPN tunnel) INPUT
+  become: yes
+
+- name: Accept all TUN connections (tun = VPN tunnel) OUTPUT
+  iptables:
+    chain: OUTPUT
+    out_interface: tun+
+    jump: ACCEPT
+    comment: Accept all TUN connections (tun = VPN tunnel) OUTPUT
+  become: yes
+
+- name: Set default policies to drop all communication unless specifically allowed INPUT
+  iptables:
+    chain: INPUT
+    policy: DROP
+    comment: Set default policies to drop all communication unless specifically allowed INPUT
+  become: yes
+
+- name: Set default policies to drop all communication unless specifically allowed OUTPUT
+  iptables:
+    chain: OUTPUT
+    policy: DROP
+    comment: Set default policies to drop all communication unless specifically allowed OUTPUT
+  become: yes
+
+- name: Set default policies to drop all communication unless specifically allowed FORWARD
+  iptables:
+    chain: FORWARD
+    policy: DROP
+    comment: Set default policies to drop all communication unless specifically allowed FORWARD
+  become: yes
+
+- name: persist iptables
+  become: yes
+  command: netfilter-persistent save
+
+- name: reload saved iptables on boot
+  become: yes
+  command: systemctl enable netfilter-persistent
+# handlers:
+# - import_tasks: reboot.yml

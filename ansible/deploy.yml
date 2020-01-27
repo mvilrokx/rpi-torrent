@@ -1,0 +1,60 @@
+---
+- name: provision RPi as Torrent Box
+  hosts: all
+  vars:
+    hostname: RPi-TorrentBox
+    pia_location: 'CA Toronto'
+    iptables: true
+  vars_files:
+    - vars/static_ips.yml
+    - vars/pia_credentials.yml
+    - vars/deluge.yml
+    - vars/samba.yml
+    - vars/usb_ids.yml
+
+  remote_user: pi
+  become_method: sudo
+
+  tasks:
+    - import_tasks: ./tasks/update.yml
+      tags: update
+
+    - import_tasks: ./tasks/vnc.yml
+      tags: vnc
+
+    - import_tasks: ./tasks/static_ip.yml
+      tags: static_ip
+
+    - name: install necessary packages
+      action: >
+        {{ ansible_pkg_mgr }}
+        name='openvpn, deluged, deluge-console, samba, samba-common-bin, minidlna, iptables-persistent, ntfs-3g, exfat-fuse, nftables'
+      when: ansible_pkg_mgr != 'unknown'
+      tags: packages
+      become: yes
+
+    - import_tasks: ./tasks/pia.yml
+      tags: pia
+
+    - import_tasks: ./tasks/deluge.yml
+      tags: deluge
+
+    - import_tasks: ./tasks/samba.yml
+      tags: samba
+
+    - import_tasks: ./tasks/minidlna.yml
+      tags: minidlna
+
+    - import_tasks: ./tasks/usb_poweroff.yml
+      tags: usb_poweroff
+
+    - import_tasks: ./tasks/iptables.yml
+      tags: iptables
+      when: iptables
+
+    - import_tasks: ./tasks/nftables.yml
+      tags: nftables
+      when: not iptables
+
+    - import_tasks: ./tasks/reboot.yml
+      tags: reboot

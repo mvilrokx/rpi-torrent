@@ -1,0 +1,182 @@
+# Setup and Configure Deluge
+
+# Depends on:
+#   vars:
+#       deluge_username
+#       deluge_password
+
+- name: Add 'deluge' user and group
+  user:
+    name: '{{ deluge_system_user }}'
+    system: yes
+    comment: 'Deluge Service'
+    home: '{{ deluge_user_home_dir }}'
+  become: yes
+
+- name: Add 'pi' user to deluge group
+  user:
+    name: pi
+    groups: '{{ deluge_system_user }}'
+    append: yes
+  become: yes
+
+- name: Start Deluge daemon to create config files
+  command: deluged
+  become: yes
+  become_user: deluge
+
+- name: Pausing for the daemon to create some files
+  pause: seconds=5
+
+- name: Allow remote access to deluge deamon
+  command: deluge-console "config -s allow_remote True"
+  become: yes
+  become_user: deluge
+
+- name: Stop Deluge deamon.
+  command: pkill deluged
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge Login
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/auth'
+    insertafter: EOF
+    line: "{{ deluge_username | default('pi') }}:{{ deluge_password | default('raspberry') }}:10"
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Copy deluged service file
+  template:
+    src: templates/deluged.service.j2
+    dest: /etc/systemd/system/deluged.service
+    backup: yes
+  become: yes
+
+- name: Create deluged.service.d directory
+  file: path=/etc/systemd/system/deluged.service.d state=directory # mode=0755
+  become: yes
+
+- name: Copy deluged user.conf file
+  template:
+    src: templates/user.conf.j2
+    dest: /etc/systemd/system/deluged.service.d/user.conf
+    backup: yes
+  become: yes
+
+- name: Start Deluge at boot time
+  systemd:
+    name: /etc/systemd/system/deluged.service
+    enabled: yes
+  become: yes
+
+- name: Download YaRSS2 Plugin
+  get_url:
+    url: '{{ yarss_egg }}'
+    dest: '{{ deluge_user_home_dir }}/{{ plugins_location }}'
+    validate_certs: no
+    mode: 0755
+    group: deluge
+    owner: deluge
+    # backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Configure YaRSS2 Plugin
+  template:
+    src: templates/yarss2.j2
+    dest: '{{ deluge_user_home_dir }}/.config/deluge/yarss2.conf'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - set completed downloads directory
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "move_completed_path":'
+    line: '  "move_completed_path": "{{ mount_point }}/{{ share_directory }}/{{ move_completed }}",'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - set download directory
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "download_location":'
+    line: '  "download_location": "{{ mount_point }}/{{ share_directory }}/{{ download_location }}",'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - set torrentfiles directory
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "torrentfiles_location":'
+    line: '  "torrentfiles_location": "{{ mount_point }}/{{ share_directory }}/{{ torrentfiles_location }}",'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - set autoadd directory
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "autoadd_location":'
+    line: '  "autoadd_location": "{{ mount_point }}/{{ share_directory }}/{{ autoadd_location }}",'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - set plugin directory
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "plugins_location":'
+    line: '  "plugins_location": "{{ deluge_user_home_dir }}/{{ plugins_location }}",'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - Enable YaRSS2 plugin
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "enabled_plugins":'
+    line: '  "enabled_plugins": ["{{ enabled_plugins }}"],'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - Enable Move Completed Torrents
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "copy_torrent_file":'
+    line: '  "copy_torrent_file": true,'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - Enable Delete of Copy of Torrent File on remove
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "del_copy_torrent_file":'
+    line: '  "del_copy_torrent_file": true,'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - Enable Move of completed torrent file
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "move_completed":'
+    line: '  "move_completed": true,'
+    backup: yes
+  become: yes
+  become_user: deluge
+
+- name: Config Deluge - Enable Auto Add of torrent file
+  lineinfile:
+    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
+    regex: '^  "autoadd_enable":'
+    line: '  "autoadd_enable": true,'
+    backup: yes
+  become: yes
+  become_user: deluge

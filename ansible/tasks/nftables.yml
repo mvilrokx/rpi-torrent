@@ -1,0 +1,14 @@
+- name: Copy nft commands to RPi
+  template:
+    src: templates/nft_commands.nft
+    dest: /tmp/nft_commands.nft
+    backup: yes
+  become: yes
+
+- name: Set nftables
+  command: nft -f /tmp/nft_commands.nft
+  become: yes
+
+- name: Enable nftables on boot
+  command: systemctl enable nftables.service
+  become: yes

@@ -1,0 +1,64 @@
+{
+  "file": 8,
+  "format": 1
+}{
+  "cookies": {},
+  "subscriptions": {
+    "0": {
+      "max_download_speed": -2,
+      "key": "0",
+      "regex_include_ignorecase": true,
+      "download_location": "{{ download_location }}",
+      "max_upload_slots": -2,
+      "max_connections": -2,
+      "ignore_timestamp": false,
+      "label": "",
+      "max_upload_speed": -2,
+      "last_match": "{{ ansible_date_time.iso8601 }}",
+      "prioritize_first_last_pieces": "Default",
+      "auto_managed": "Default",
+      "custom_text_lines": "",
+      "regex_exclude_ignorecase": true,
+      "email_notifications": {},
+      "move_completed": "{{ move_completed }}",
+      "active": true,
+      "sequential_download": "Default",
+      "regex_include": "{{ regex_include }}",
+      "regex_exclude": "",
+      "name": "{{ subscription_name }}",
+      "add_torrents_in_paused_state": "Default",
+      "rssfeed_key": "{{ rssfeed_key }}"
+    }
+  },
+  "email_messages": {},
+  "rssfeeds": {
+    "0": {
+      "key": "0",
+      "name": "{{ rssfeed_name }}",
+      "url": "{{ rssfeed_url }}",
+      "prefer_magnet": false,
+      "site": "{{ rssfeed_site }}",
+      "last_update": "{{ ansible_date_time.iso8601 }}",
+      "active": true,
+      "user_agent": "",
+      "update_on_startup": false,
+      "obey_ttl": true,
+      "update_interval": 30
+    }
+  },
+  "general": {
+    "show_log_in_gui": true
+  },
+  "email_configurations": {
+    "default_email_subject": "[YaRSS2]: RSS event ($subscription_title)",
+    "from_address": "",
+    "smtp_authentication": false,
+    "send_email_on_torrent_events": false,
+    "smtp_port": "",
+    "smtp_server": "",
+    "smtp_password": "",
+    "default_email_message": "Hi\n\nThe following torrents have been added:\n$torrentlist\nRegards",
+    "smtp_username": "",
+    "default_email_to_address": ""
+  }
+}

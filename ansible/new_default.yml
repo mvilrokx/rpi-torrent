@@ -1,0 +1,55 @@
+---
+- hosts: rpi
+  gather_facts: yes
+  vars:
+    wifi_country: 'US'
+    locale: 'en_US.UTF-8'
+    keyboard_layout: 'us'
+    timezone: America/Los_Angeles
+    iptables: true
+
+  remote_user: pi
+  become_method: sudo
+
+  vars_prompt:
+    - name: hostname
+      prompt: 'please enter a hostname for your new device ([a-z][A-Z](0-9)):'
+      default: raspberrypi
+      private: no
+    - name: wifi_ssid
+      prompt: 'please enter the WiFi SSID for your new device:'
+      private: no
+    - name: wifi_password
+      prompt: 'please enter the WiFi password for your new device:'
+      private: yes
+
+  handlers:
+    - import_tasks: ./tasks/reboot.yml
+
+  tasks:
+    # Set Internationalization Options
+    - import_tasks: ./tasks/internationalization.yml
+      tags: setup
+
+    # Set WiFi Options
+    - import_tasks: ./tasks/wifi.yml
+      tags: setup
+
+    # Run apt-get update and apt-get upgrade
+    - import_tasks: ./tasks/update.yml
+      tags: update
+
+    # Set the hostname
+    - import_tasks: ./tasks/hostname.yml
+      tags: setup
+
+    - name: Switch back from nft to iptables (https://wiki.debian.org/nftables)
+      command: 'update-alternatives --set {{ item }}'
+      with_items:
+        - iptables /usr/sbin/iptables-legacy
+        - ip6tables /usr/sbin/ip6tables-legacy
+        # - arptables /usr/sbin/arptables-legacy
+        # - ebtables /usr/sbin/ebtables-legacy
+      become: yes
+      notify: reboot
+      when: iptables

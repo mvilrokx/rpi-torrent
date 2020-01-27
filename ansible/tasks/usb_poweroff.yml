@@ -1,0 +1,25 @@
+# Setup the RPi so that it can be powered down safely by unplugging a USB device
+
+# This can be handy when you loose the ssh/vnc connection to your RPi
+
+# You can get the usb_vendor_id and usb_model_id by running lsusb on the RPi
+# You should see something like:
+# Bus 001 Device 004: ID 7392:7811 Edimax Technology Co., Ltd EW-7811Un 802.11n Wireless Adapter [Realtek RTL8188CUS]
+
+# The first number after "ID" is the VendorID, the second one (after the :) is the ModelID
+
+# Depends on:
+#   vars:
+#       usb_vendor_id
+#       usb_model_id
+
+- name: poweroff on removal USB device
+  template:
+    src: templates/10-poweroff.rules.j2
+    dest: /etc/udev/rules.d/10-poweroff.rules
+    backup: yes
+  become: yes
+
+- name: apply udev rule
+  command: udevadm control --reload-rules
+  become: yes

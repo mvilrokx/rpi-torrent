@@ -1,0 +1,69 @@
+# Setup and Configure Private Internet Access VPN
+
+# Depends on:
+#   vars:
+#       pia_username
+#       pia_password
+#       pia_location
+#
+
+- name: Download and Unzip Private Internet Access config files
+  unarchive:
+    src: https://www.privateinternetaccess.com/openvpn/openvpn.zip
+    dest: /etc/openvpn
+    remote_src: yes
+  become: yes
+
+- name: Config PIA Login
+  copy:
+    content: "{{ pia_username}}\n{{ pia_password }}"
+    dest: '/etc/openvpn/login.conf'
+    mode: 400
+  become: yes
+
+- name: Copy PIA OpenVPN Config File
+  copy:
+    src: '/etc/openvpn/{{ pia_location }}.ovpn'
+    dest: "/etc/openvpn/{{ pia_location | regex_replace(' ') }}.conf"
+    remote_src: yes
+  become: yes
+
+- name: Set PIA Credentials
+  lineinfile:
+    path: "/etc/openvpn/{{ pia_location | regex_replace(' ') }}.conf"
+    regexp: '^auth-user-pass'
+    line: auth-user-pass /etc/openvpn/login.conf
+    backup: yes
+  become: yes
+
+- name: Add Certificate revocation list (crl) location
+  blockinfile:
+    path: "/etc/openvpn/{{ pia_location | regex_replace(' ') }}.conf"
+    block: |
+      /etc/openvpn/
+    marker: '# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}'
+    insertafter: '{{ item.regexp }}'
+    backup: yes
+  with_items:
+    - { name: crl, regexp: '^<crl-verify>$' }
+    - { name: ca, regexp: '^<ca>$' }
+  become: yes
+
+- name: Configure Autostart for OpenVPN
+  lineinfile:
+    path: /etc/default/openvpn
+    insertafter: '^#AUTOSTART='
+    line: 'AUTOSTART="{{ pia_location | regex_replace('' '') }}"'
+    backup: yes
+  become: yes
+# I am already doing this in the static_ip task
+# - name: Set DNS Servers to prevent DNS Leaks
+#   lineinfile:
+#     path: /etc/dhcpcd.conf
+#     insertafter: '^#static domain_name_servers='
+#     # Cloudflare DNS Servers
+#     line: static domain_name_servers=1.1.1.1 1.0.0.1
+#     # PIA DNS Servers
+#     # line: static domain_name_servers=209.222.18.222 209.222.18.218
+#     backup: yes
+#   become: yes

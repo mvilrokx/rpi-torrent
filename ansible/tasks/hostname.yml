@@ -1,0 +1,28 @@
+# Set the hostname for the RPi
+
+# Note that this requires a change in 2 files
+# see https://blog.jongallant.com/2017/11/raspberrypi-change-hostname/ for info
+
+# Depends on:
+#   vars:
+#       hostname: "rpi-torrent"
+#
+
+- name: Set the hostname in /etc/hostname
+  become: yes
+  command: hostnamectl set-hostname "{{ hostname }}"
+
+- name: Set the hostname in /etc/hostname
+  become: yes
+  lineinfile:
+    path: /etc/hostname
+    line: '{{ hostname }}'
+    backup: yes
+
+- name: Set the hostname in /etc/hosts
+  become: yes
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.1\.1'
+    line: "127.0.1.1\t{{ hostname }}"
+    backup: yes

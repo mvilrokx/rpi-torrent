@@ -1,0 +1,26 @@
+# - name: Give the RPi a Static IP Address
+- name: Give the RPi a Static IP Addresses and a fallback profile
+  blockinfile:
+    path: /etc/dhcpcd.conf
+    block: |
+      # static IP configuration:
+      interface eth0
+      static ip_address={{ eth0['ip_address'] }}
+      static routers={{ eth0['routers'] }}
+      static domain_name_servers={{ eth0['domain_name_servers'] }}
+
+      interface wlan0
+      static ip_address={{ wlan0['ip_address'] }}
+      static routers={{ wlan0['routers'] }}
+      static domain_name_servers={{ wlan0['domain_name_servers'] }}
+
+      # define static profile
+      profile static_eth0
+      static ip_address=192.168.0.227/24
+      static routers=192.168.0.1
+      #static domain_name_servers=192.168.1.1
+
+      # fallback to static profile on eth0
+      interface eth0
+      fallback static_eth0
+  become: yes

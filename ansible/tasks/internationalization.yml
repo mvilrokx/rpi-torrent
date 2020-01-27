@@ -1,0 +1,18 @@
+# Set Internationalization Options for the Pi
+# Depends on:
+#   vars:
+#       locale: "en_US.UTF-8"
+#       keyboard_layout: "us"
+#       timezone: America/Los_Angeles
+
+- name: Set the locale via raspi-config
+  become: yes
+  command: raspi-config nonint do_change_locale {{ locale }}
+
+- name: Set the keyboard layout via raspi-config
+  become: yes
+  command: raspi-config nonint do_configure_keyboard {{ keyboard_layout }}
+
+- name: set timezone
+  become: yes
+  command: timedatectl set-timezone {{ timezone }}

@@ -1,0 +1,21 @@
+- name: Set miniDLNA user
+  lineinfile:
+    path: /etc/minidlna.conf
+    regexp: '^#user=minidlna'
+    line: user=minidlna
+    backup: yes
+  become: yes
+
+- name: Set miniDLNA media directory
+  lineinfile:
+    path: /etc/minidlna.conf
+    regexp: '^media_dir=/var/lib/minidlna'
+    line: media_dir=/media/USBHDD1/shares/torrents/completed
+    backup: yes
+  become: yes
+
+- name: restart minidlna
+  service:
+    name: minidlna
+    state: restarted
+  become: true

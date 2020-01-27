@@ -1,0 +1,69 @@
+- name: Create Mount point on RPi for External HDD
+  file:
+    path: '{{ mount_point }}'
+    state: directory
+  become: yes
+
+- name: Mount External HDD
+  mount:
+    path: '{{ mount_point }}'
+    src: /dev/sda1
+    fstype: ntfs
+    state: present
+  become: yes
+
+- name: Create directories on now mounted HDD
+  file:
+    path: '{{ item.path }}'
+    state: directory
+  with_items:
+    - {
+        path: '{{ mount_point }}/{{ share_directory }}/{{ download_location }}',
+      }
+    - { path: '{{ mount_point }}/{{ share_directory }}/{{ move_completed }}' }
+    - { path: '{{ mount_point }}/{{ share_directory }}/{{ autoadd_location }}' }
+    - {
+        path: '{{ mount_point }}/{{ share_directory }}/{{ torrentfiles_location }}',
+      }
+  become: yes
+
+- name: Set Samba security
+  lineinfile:
+    path: /etc/samba/smb.conf
+    regexp: '^# security = user'
+    line: security = user
+    backup: yes
+  become: yes
+
+- name: Samba configuration
+  blockinfile:
+    path: /etc/samba/smb.conf
+    block: |
+      [RaspberryExternalHDD]
+      comment = Raspberry Pi External HDD
+      path = {{ mount_point }}/{{ share_directory}}
+      writeable = Yes
+      create mask = 0777
+      directory mask = 0777
+  become: yes
+
+- name: restart smbd
+  service:
+    name: smbd
+    state: restarted
+  become: true
+
+- name: Configure pi user as a Samba users.
+  shell: >
+    (pdbedit --user=pi 2>&1 > /dev/null)
+    || (echo 'raspberry'; echo 'raspberry')
+    | smbpasswd -s -a pi
+  become: yes
+
+- name: Configure auto-mount of External HDD
+  lineinfile:
+    path: /etc/fstab
+    regexp: '^/dev/sda1'
+    line: /dev/sda1 '{{ mount_point }}' ntfs defaults,auto,users,nofail,noatime,x-systemd.device-timeout=30,umask=000 0 0
+    backup: yes
+  become: yes
