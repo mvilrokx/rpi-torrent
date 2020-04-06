@@ -10,7 +10,7 @@
   lineinfile:
     path: /etc/minidlna.conf
     regexp: '^media_dir=/var/lib/minidlna'
-    line: media_dir=/media/USBHDD1/shares/torrents/completed
+    line: 'media_dir={{ mount_point }}/{{ share_directory }}/{{ locations.completed }}'
     backup: yes
   become: yes
 

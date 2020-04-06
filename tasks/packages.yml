@@ -1,0 +1,17 @@
+# - name: install necessary packages
+#   action: >
+#     {{ ansible_pkg_mgr }}
+#     name='openvpn, deluged, deluge-console, samba, samba-common-bin, minidlna, iptables-persistent, ntfs-3g, exfat-fuse, nftables'
+#   when: ansible_pkg_mgr != 'unknown'
+#   tags: packages
+#   become: yes
+
+- name: install necessary packages
+  apt:
+    pkg: '{{ packages }}'
+  # action: >
+  #   {{ ansible_pkg_mgr }}
+  #   name='openvpn, deluged, deluge-console, samba, samba-common-bin, minidlna, iptables-persistent, ntfs-3g, exfat-fuse, nftables'
+  # when: ansible_pkg_mgr != 'unknown'
+  tags: packages
+  become: yes

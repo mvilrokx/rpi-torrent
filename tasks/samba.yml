@@ -7,7 +7,7 @@
 - name: Mount External HDD
   mount:
     path: '{{ mount_point }}'
-    src: /dev/sda1
+    src: '{{ external_hdd }}'
     fstype: ntfs
     state: present
   become: yes
@@ -18,12 +18,16 @@
     state: directory
   with_items:
     - {
-        path: '{{ mount_point }}/{{ share_directory }}/{{ download_location }}',
+        path: '{{ mount_point }}/{{ share_directory }}/{{ locations.downloading }}',
       }
-    - { path: '{{ mount_point }}/{{ share_directory }}/{{ move_completed }}' }
-    - { path: '{{ mount_point }}/{{ share_directory }}/{{ autoadd_location }}' }
     - {
-        path: '{{ mount_point }}/{{ share_directory }}/{{ torrentfiles_location }}',
+        path: '{{ mount_point }}/{{ share_directory }}/{{ locations.completed }}',
+      }
+    - {
+        path: '{{ mount_point }}/{{ share_directory }}/{{ locations.autoadd }}',
+      }
+    - {
+        path: '{{ mount_point }}/{{ share_directory }}/{{ locations.backups }}',
       }
   become: yes
 
@@ -39,7 +43,7 @@
   blockinfile:
     path: /etc/samba/smb.conf
     block: |
-      [RaspberryExternalHDD]
+      [{{ external_hdd_samba_name }}]
       comment = Raspberry Pi External HDD
       path = {{ mount_point }}/{{ share_directory}}
       writeable = Yes
@@ -63,7 +67,7 @@
 - name: Configure auto-mount of External HDD
   lineinfile:
     path: /etc/fstab
-    regexp: '^/dev/sda1'
-    line: /dev/sda1 '{{ mount_point }}' ntfs defaults,auto,users,nofail,noatime,x-systemd.device-timeout=30,umask=000 0 0
+    regexp: '^{{ external_hdd }}'
+    line: "{{ external_hdd }}\t{{ mount_point }}\tntfs\tdefaults,auto,users,nofail,noatime,x-systemd.device-timeout=30,umask=000\t0\t0"
     backup: yes
   become: yes

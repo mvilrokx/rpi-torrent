@@ -125,5 +125,3 @@
 - name: reload saved iptables on boot
   become: yes
   command: systemctl enable netfilter-persistent
-# handlers:
-# - import_tasks: reboot.yml

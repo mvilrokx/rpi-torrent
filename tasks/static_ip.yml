@@ -5,14 +5,14 @@
     block: |
       # static IP configuration:
       interface eth0
-      static ip_address={{ eth0['ip_address'] }}
-      static routers={{ eth0['routers'] }}
-      static domain_name_servers={{ eth0['domain_name_servers'] }}
+      static ip_address={{ eth0.ip_address }}
+      static routers={{ eth0.routers }}
+      static domain_name_servers={{ eth0.domain_name_servers }}
 
       interface wlan0
-      static ip_address={{ wlan0['ip_address'] }}
-      static routers={{ wlan0['routers'] }}
-      static domain_name_servers={{ wlan0['domain_name_servers'] }}
+      static ip_address={{ wlan0.ip_address }}
+      static routers={{ wlan0.routers }}
+      static domain_name_servers={{ wlan0.domain_name_servers }}
 
       # define static profile
       profile static_eth0

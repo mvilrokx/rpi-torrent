@@ -2,8 +2,26 @@
 
 # Depends on:
 #   vars:
-#       deluge_username
+#       deluge_system_user
 #       deluge_password
+#       deluge_user_home_dir
+#       yarss_egg
+#       locations:
+#         plugins
+#         downloads
+#         completed
+#         backups
+#         autoadd
+#       mount_point
+#       share_directory
+#       enabled_plugins
+#       regex_include
+#       subscription_name
+#       rssfeed
+#         key
+#         name
+#         url
+#         site
 
 - name: Add 'deluge' user and group
   user:
@@ -23,7 +41,7 @@
 - name: Start Deluge daemon to create config files
   command: deluged
   become: yes
-  become_user: deluge
+  become_user: '{{ deluge_system_user }}'
 
 - name: Pausing for the daemon to create some files
   pause: seconds=5
@@ -31,21 +49,22 @@
 - name: Allow remote access to deluge deamon
   command: deluge-console "config -s allow_remote True"
   become: yes
-  become_user: deluge
+  become_user: '{{ deluge_system_user }}'
 
 - name: Stop Deluge deamon.
   command: pkill deluged
   become: yes
-  become_user: deluge
+  become_user: '{{ deluge_system_user }}'
 
 - name: Config Deluge Login
   lineinfile:
     path: '{{ deluge_user_home_dir }}/.config/deluge/auth'
     insertafter: EOF
-    line: "{{ deluge_username | default('pi') }}:{{ deluge_password | default('raspberry') }}:10"
+    # line: "{{ deluge_system_user | default('pi') }}:{{ deluge_password | default('raspberry') }}:10"
+    line: pi:raspberry:10
     backup: yes
   become: yes
-  become_user: deluge
+  become_user: '{{ deluge_system_user }}'
 
 - name: Copy deluged service file
   template:
@@ -74,14 +93,13 @@
 - name: Download YaRSS2 Plugin
   get_url:
     url: '{{ yarss_egg }}'
-    dest: '{{ deluge_user_home_dir }}/{{ plugins_location }}'
+    dest: '{{ deluge_user_home_dir }}/{{ locations.plugins }}'
     validate_certs: no
     mode: 0755
-    group: deluge
-    owner: deluge
-    # backup: yes
+    group: '{{ deluge_system_user }}'
+    owner: '{{ deluge_system_user }}'
   become: yes
-  become_user: deluge
+  become_user: '{{ deluge_system_user }}'
 
 - name: Configure YaRSS2 Plugin
   template:
@@ -89,94 +107,48 @@
     dest: '{{ deluge_user_home_dir }}/.config/deluge/yarss2.conf'
     backup: yes
   become: yes
-  become_user: deluge
+  become_user: '{{ deluge_system_user }}'
 
-- name: Config Deluge - set completed downloads directory
+- name: Config Deluge
   lineinfile:
     path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "move_completed_path":'
-    line: '  "move_completed_path": "{{ mount_point }}/{{ share_directory }}/{{ move_completed }}",'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
     backup: yes
   become: yes
-  become_user: deluge
-
-- name: Config Deluge - set download directory
-  lineinfile:
-    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "download_location":'
-    line: '  "download_location": "{{ mount_point }}/{{ share_directory }}/{{ download_location }}",'
-    backup: yes
-  become: yes
-  become_user: deluge
-
-- name: Config Deluge - set torrentfiles directory
-  lineinfile:
-    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "torrentfiles_location":'
-    line: '  "torrentfiles_location": "{{ mount_point }}/{{ share_directory }}/{{ torrentfiles_location }}",'
-    backup: yes
-  become: yes
-  become_user: deluge
-
-- name: Config Deluge - set autoadd directory
-  lineinfile:
-    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "autoadd_location":'
-    line: '  "autoadd_location": "{{ mount_point }}/{{ share_directory }}/{{ autoadd_location }}",'
-    backup: yes
-  become: yes
-  become_user: deluge
-
-- name: Config Deluge - set plugin directory
-  lineinfile:
-    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "plugins_location":'
-    line: '  "plugins_location": "{{ deluge_user_home_dir }}/{{ plugins_location }}",'
-    backup: yes
-  become: yes
-  become_user: deluge
-
-- name: Config Deluge - Enable YaRSS2 plugin
-  lineinfile:
-    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "enabled_plugins":'
-    line: '  "enabled_plugins": ["{{ enabled_plugins }}"],'
-    backup: yes
-  become: yes
-  become_user: deluge
-
-- name: Config Deluge - Enable Move Completed Torrents
-  lineinfile:
-    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "copy_torrent_file":'
-    line: '  "copy_torrent_file": true,'
-    backup: yes
-  become: yes
-  become_user: deluge
-
-- name: Config Deluge - Enable Delete of Copy of Torrent File on remove
-  lineinfile:
-    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "del_copy_torrent_file":'
-    line: '  "del_copy_torrent_file": true,'
-    backup: yes
-  become: yes
-  become_user: deluge
-
-- name: Config Deluge - Enable Move of completed torrent file
-  lineinfile:
-    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "move_completed":'
-    line: '  "move_completed": true,'
-    backup: yes
-  become: yes
-  become_user: deluge
-
-- name: Config Deluge - Enable Auto Add of torrent file
-  lineinfile:
-    path: '{{ deluge_user_home_dir }}/.config/deluge/core.conf'
-    regex: '^  "autoadd_enable":'
-    line: '  "autoadd_enable": true,'
-    backup: yes
-  become: yes
-  become_user: deluge
+  become_user: '{{ deluge_system_user }}'
+  with_items:
+    - {
+        regexp: '^  "move_completed_path":',
+        line: '  "move_completed_path": "{{ mount_point }}/{{ share_directory }}/{{ locations.completed }}",',
+      }
+    - {
+        regexp: '^  "download_location":',
+        line: '  "download_location": "{{ mount_point }}/{{ share_directory }}/{{ locations.downloading }}",',
+      }
+    - {
+        regexp: '^  "torrentfiles_location":',
+        line: '  "torrentfiles_location": "{{ mount_point }}/{{ share_directory }}/{{ locations.backups }}",',
+      }
+    - {
+        regexp: '^  "autoadd_location":',
+        line: '  "autoadd_location": "{{ mount_point }}/{{ share_directory }}/{{ locations.autoadd }}",',
+      }
+    - {
+        regexp: '^  "plugins_location":',
+        line: '  "plugins_location": "{{ deluge_user_home_dir }}/{{ locations.plugins }}",',
+      }
+    - {
+        regexp: '^  "enabled_plugins":',
+        line: '  "enabled_plugins": ["{{ enabled_plugins }}"],',
+      }
+    - {
+        regexp: '^  "copy_torrent_file":',
+        line: '  "copy_torrent_file": true,',
+      }
+    - {
+        regexp: '^  "del_copy_torrent_file":',
+        line: '  "del_copy_torrent_file": true,',
+      }
+    - { regexp: '^  "move_completed":', line: '  "move_completed": true,' }
+    - { regexp: '^  "autoadd_enable":', line: '  "autoadd_enable": true,' }

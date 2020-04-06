@@ -5,7 +5,6 @@
 # $ raspi-config nonint get_config_var hdmi_mode /boot/config.txt
 # You could set the RPI manually using the raspi-config UI and then get these values
 - name: Enable VNC Service on boot
-  # command: systemctl enable vncserver-x11-serviced
   command: raspi-config nonint do_vnc  0
   become: yes
 

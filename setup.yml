@@ -2,15 +2,43 @@
 - name: provision RPi as Torrent Box
   hosts: all
   vars:
-    hostname: RPi-TorrentBox
     pia_location: 'CA Toronto'
     iptables: true
+    packages:
+      - openvpn
+      - deluged
+      - deluge-console
+      - samba
+      - samba-common-bin
+      - minidlna
+      - iptables-persistent
+      - ntfs-3g
+      - exfat-fuse
+      - nftables
+
   vars_files:
     - vars/static_ips.yml
     - vars/pia_credentials.yml
     - vars/deluge.yml
     - vars/samba.yml
     - vars/usb_ids.yml
+
+  vars_prompt:
+    - name: pia_username
+      prompt: 'please enter your Private Internet Access account username:'
+      private: no
+    - name: pia_password
+      prompt: 'please enter your Private Internet Access account password:'
+      private: yes
+    - name: rssfeed_url
+      prompt: 'please enter your ShowRSS Personal RSS Feed URL:'
+      private: no
+    - name: usb_vendor_id
+      prompt: 'please enter your USB Device Vendor ID:'
+      private: no
+    - name: usb_model_id
+      prompt: 'please enter your USB Device Model ID:'
+      private: no
 
   remote_user: pi
   become_method: sudo
@@ -25,13 +53,8 @@
     - import_tasks: ./tasks/static_ip.yml
       tags: static_ip
 
-    - name: install necessary packages
-      action: >
-        {{ ansible_pkg_mgr }}
-        name='openvpn, deluged, deluge-console, samba, samba-common-bin, minidlna, iptables-persistent, ntfs-3g, exfat-fuse, nftables'
-      when: ansible_pkg_mgr != 'unknown'
+    - import_tasks: ./tasks/packages.yml
       tags: packages
-      become: yes
 
     - import_tasks: ./tasks/pia.yml
       tags: pia
