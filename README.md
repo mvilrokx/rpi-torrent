@@ -1,6 +1,6 @@
 # Ansible Playbooks to Setup Raspberry Pis
 
-This repository contains a few Ansible Playbooks that you can use to setup Raspberry Pis as an always-on torrent box, complete with Private Internet Access VPN protection (BYO PIA VPN Account) and a [Kill Switch](https://www.privateinternetaccess.com/blog/2018/12/understanding-a-vpn-kill-switch/).
+This repository contains a few Ansible Playbooks that you can use to setup Raspberry Pis as an always-on torrent box, complete with Private Internet Access VPN protection ([BYO PIA VPN Account](https://www.privateinternetaccess.com/pages/buy-vpn/vilrokx)) and a [Kill Switch](https://www.privateinternetaccess.com/blog/2018/12/understanding-a-vpn-kill-switch/).
 
 ## Prerequisites
 
@@ -53,7 +53,7 @@ This playbook will perform the following tasks:
 - switch on the VNC server
 - give the RPi a static IP address
 - install all necessary packages
-- install and configure Private Internet Access VPN (you need an account with them)
+- install and configure Private Internet Access VPN ([you need an account with them](https://www.privateinternetaccess.com/pages/buy-vpn/vilrokx))
 - install and configure deluge
 - install and configure samba
 - install and configure miniDLNA
