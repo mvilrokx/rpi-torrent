@@ -1,0 +1,25 @@
+---
+layout: default
+---
+
+<div class="flex flex-column" style="height:100%; min-height:100%">
+
+  <div class="flex" style="flex:1;">
+
+    <div class="col col-4 sm-col-4 md-col-4 lg-col-3">
+      {% include toc.html %}
+    </div>
+
+    <div class="guide col col-8 sm-col-8 md-col-8 lg-col-9 px3">
+      <h1>{{ page.title }}</h1>
+      {{ content }}
+
+      {% for section in site.sections %}
+      {%   if section.chapter == page.chapter %}
+      <h2 id="{{ section.title | slugify}}">{{ section.title }}</h2>
+      {{     section.output }}
+      {%   endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>

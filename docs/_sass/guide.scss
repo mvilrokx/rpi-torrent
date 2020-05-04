@@ -1,0 +1,12 @@
+.guide {
+  font-weight: 250;
+  a {
+    text-decoration: none;
+    transition: color 0.25s, background-color 0.25s, transform 2s;
+    &:hover {
+      text-decoration: none;
+      background-color: #0074d9;
+      color: #fff;
+    }
+  }
+}

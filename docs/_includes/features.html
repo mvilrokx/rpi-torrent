@@ -1,0 +1,8 @@
+<div class="flex flex-wrap p1 sm-p1 lg-p2">
+  {% for feature in site.data.features %}
+  <div class="sm-col sm-col-12 md-col-6 lg-col-4 p0 sm-px0 md-px2 lg-px4 sm-py0 md-py1 lg-py2">
+    <div class="h2 bold sm-mt1 lg-mt2 sm-mb1">{{ feature.title }}</div>
+    <div>{{feature.description}}
+    </div>
+  </div>
+  {% endfor %}</div>

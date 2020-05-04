@@ -1,0 +1,12 @@
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - github-pages
+# collections_dir: collections
+collections:
+  sections:
+    output: false
+  chapters:
+    output: true
+    permalink: /guide/:collection/:name

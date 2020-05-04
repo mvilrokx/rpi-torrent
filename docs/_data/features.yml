@@ -1,0 +1,12 @@
+- title: Free
+  description: The script will always be free. All included software is also free and Open Source.
+- title: Simple
+  description: The process to setup your Raspberry Pi is completely automated. Just provide a few parameters and start the setup script. No human intervention required.
+- title: Secure
+  description: Once setup, your activity will be hidden from prying eyes. When your VPN connection drops out, a Kill Switch will ensure that no traffic can come in our out of your RPi.
+- title: Repeatable
+  description: Got a lot of Raspberry Pi devices? No worries, you can set all of them up with the same process, over and over again. SD Card got corrupted? You will be back up and running in a matter of minutes.
+- title: Compatible
+  description: The script will work on all types of Raspberry Pi devices (although, we recommend using a RPi 2 or higher).
+- title: Additional Features
+  description: Besides a Torrent Server, the script will also setup a DLNA server so you can access what you download from a DLNA client (e.g. your smart TV).

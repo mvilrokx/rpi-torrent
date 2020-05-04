@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>{{ page.title }}</title>
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-NN954G2');</script>
+  <!-- End Google Tag Manager -->
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <!-- {% feed_meta %} -->
+  {% seo %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
+  <link rel="stylesheet" href="https://unpkg.com/ace-css/css/ace.min.css">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
+  </style>
+
+</head>
+
+<body class="flex flex-column">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NN954G2" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <div style="flex:1;">
+    {% include notification_bar.html %}
+    {{ content }}
+  </div>
+  {% include footer.html %}
+  {% include skimlinksJS.html %}
+</body>
+
+</html>
