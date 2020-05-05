@@ -3,8 +3,8 @@
 
   {% for chapter in site.chapters %}
   <div class="h3">
-    <a href="{{ chapter.url }}" {% if page.url == chapter.url %} class="aqua text-decoration-none" {% else %}
-      class="black text-decoration-none" {% endif %}>{{ chapter.title }}</a>
+    <a href="{{ chapter.url | relative_url }}" {% if page.url == chapter.url %} class="aqua text-decoration-none"
+      {% else %} class="black text-decoration-none" {% endif %}>{{ chapter.title }}</a>
   </div>
 
   {% for section in site.sections %}
