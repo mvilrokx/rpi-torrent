@@ -10,3 +10,5 @@ collections:
   chapters:
     output: true
     permalink: /guide/:collection/:name
+# Google Analytics
+google_analytics: UA-165439578-1
