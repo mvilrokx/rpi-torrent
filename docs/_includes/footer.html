@@ -2,7 +2,7 @@
   <ul class="list-reset">
     {% for item in site.data.footer %}
     <li class="inline-block py1 mr4">
-      <a href="{{ item.link }}"
+      <a href="{{ item.link | relative_url }}"
         class="{% if page.url == item.link %} aqua {% else %} silver {% endif %} text-decoration-none">
         {{ item.name }}
       </a>
