@@ -1,6 +1,6 @@
 - name: Home
   link: /
 - name: Guide
-  link: /guide.html
+  link: /guide/chapters/01-introduction
 - name: About
   link: /about.html
