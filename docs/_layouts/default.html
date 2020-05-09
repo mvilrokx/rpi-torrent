@@ -1,31 +1,20 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="no-js" lang="">
 
-<head>
-  <meta charset="utf-8" />
-  <title>{{ page.title }}</title>
-  {% if site.google_analytics and jekyll.environment == 'production' %}
-  {% include analytics.html %}
-  {% endif %}
-  <link rel="stylesheet" href="{{ 'assets/css/styles.css' | relative_url }}" />
-  <!-- {% feed_meta %} -->
-  {% seo %}
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
-  <link rel="stylesheet" href="https://unpkg.com/ace-css/css/ace.min.css">
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css" />
-  </style>
-
-</head>
+{% include head.html %}
 
 <body class="flex flex-column">
+  <!--[if IE]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+
   <div style="flex:1;">
     {% include notification_bar.html %}
     {{ content }}
   </div>
+
   {% include footer.html %}
-  {% include skimlinksJS.html %}
+
 </body>
 
 </html>
