@@ -1,4 +1,22 @@
 .toc {
   height: 100%;
   font-weight: 250;
+
+  ol {
+    counter-reset: item;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    display: block;
+  }
+  li:before {
+    content: counters(item, '.') '. ';
+    counter-increment: item;
+    font-feature-settings: 'kern' 1, 'tnum' 1;
+    /* -webkit-font-feature-settings: "kern" 1,"tnum" 1; */
+    -ms-font-feature-settings: 'kern' 1, 'tnum' 1;
+    -moz-font-feature-settings: 'kern' 1, 'tnum' 1;
+  }
 }

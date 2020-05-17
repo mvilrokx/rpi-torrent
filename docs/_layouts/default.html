@@ -3,17 +3,16 @@
 
 {% include head.html %}
 
-<body class="flex flex-column">
-  <!--[if IE]>
-    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-  <![endif]-->
+<body>
+  {% include browserupgrade.html %}
 
-  <div style="flex:1;">
-    {% include notification_bar.html %}
+  <!-- {% include notification_bar.html %} -->
+
+  <main class="full-height">
     {{ content }}
-  </div>
+  </main>
 
-  {% include footer.html %}
+  <!-- {% include footer.html %} -->
 
 </body>
 

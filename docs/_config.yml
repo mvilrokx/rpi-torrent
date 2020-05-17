@@ -7,8 +7,10 @@ plugins:
 collections:
   sections:
     output: false
+    sort_by: section
   chapters:
     output: true
-    permalink: /guide/:collection/:name
+    permalink: /guide/:collection/:title
+    sort_by: chapter
 # Google Analytics
 google_analytics: UA-165439578-1

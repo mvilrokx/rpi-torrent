@@ -1,0 +1,7 @@
+- text: New version just released!
+  link: https://github.com/mvilrokx/rpi-torrent
+  show: true
+- text: New Version Just Released!!
+  show: false
+- text: New Version Just Released!!!
+  show: false

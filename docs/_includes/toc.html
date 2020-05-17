@@ -1,21 +1,25 @@
-<div class="toc bg-darken-1 black p2">
-  <div class="center h2">Table of Content</div>
+<div class="toc bg-darken-1 black p2 border-right border-silver">
+  <ol class="list-reset">
+    {% assign chapters = site.chapters | sort: 'chapter' %}
+    {% for chapter in chapters %}
 
-  {% for chapter in site.chapters %}
-  <div class="h3">
-    <a href="{{ chapter.url | relative_url }}" {% if page.url == chapter.url %} class="aqua text-decoration-none"
-      {% else %} class="black text-decoration-none" {% endif %}>{{ chapter.title }}</a>
-  </div>
+    <li class="h3">
+      <a href="{{ chapter.url | relative_url }}" {% if page.url == chapter.url %} class="aqua text-decoration-none"
+        {% else %} class="black text-decoration-none" {% endif %}>{{ chapter.title }}</a>
 
-  {% for section in site.sections %}
-  {% if section.chapter == chapter.chapter %}
-  <div class="pl2 h4">
-    <a href="#{{ section.title | slugify}}" {% if page.url == section.url %} class="aqua text-decoration-none"
-      {% else %} class="black text-decoration-none" {% endif %}>{{ section.title }}</a>
-  </div>
-  {% endif %}
+      <ol class="list-reset">
+        {% assign sections = site.sections | sort: 'section' %}
+        {% for section in sections %}
+        {% if section.chapter == chapter.chapter %}
+        <li class="pl2 h4">
+          <a href="#{{ section.title | slugify}}" {% if page.url == section.url %} class="aqua text-decoration-none"
+            {% else %} class="black text-decoration-none" {% endif %}>{{ section.title }}</a>
+        </li>
+        {% endif %}
 
-  {% endfor %}
-
-  {% endfor %}
+        {% endfor %}
+      </ol>
+    </li>
+    {% endfor %}
+  </ol>
 </div>

@@ -1,4 +1,15 @@
-<!-- End Google Tag Manager (noscript) -->
 <div class="notification_bar caps h6 margin p1 center bold bg-navy white border-bottom border-gray">
-  New version just released!
+  <ul class="list-reset my0">
+    {% for notification in site.data.notifications %}
+    {% if notification.show %}
+    <li class="notification">
+      {% if notification.link == "" or notification.link == nil %}
+      <div>{{notification.text}}</div>
+      {% else %}
+      <a href={{ notification.link }}>{{notification.text}}</a>
+      {% endif %}
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
 </div>

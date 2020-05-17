@@ -2,16 +2,17 @@
 layout: default
 ---
 
-<div class="flex">
-  <div class="col col-4 sm-col-4 md-col-4 lg-col-3">
+<div class="full-height flex">
+  <div class="overflow-y-auto" style="flex: 1;">
     {% include toc.html %}
   </div>
 
-  <div class="guide px3" style="flex:1; overflow:auto;">
+  <div class="overflow-y-auto guide px3" style="flex: 3;">
     <h1>{{ page.title }}</h1>
     {{ content }}
 
-    {% for section in site.sections %}
+    {% assign sections = site.sections | sort: 'section' %}
+    {% for section in sections %}
     {%   if section.chapter == page.chapter %}
     <h2 id="{{ section.title | slugify}}">{{ section.title }}</h2>
     {{     section.output }}
